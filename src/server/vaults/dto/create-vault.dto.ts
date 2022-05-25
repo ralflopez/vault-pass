@@ -9,6 +9,11 @@ export class CreateVaultDto {
 
   @IsDefined()
   @IsString()
+  @IsMd5()
+  encryptionKey: string;
+
+  @IsDefined()
+  @IsString()
   domain: string;
 
   @IsDefined()

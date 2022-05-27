@@ -17,7 +17,7 @@ export class VaultsService {
     value,
   }: CreateVaultDto): Promise<VaultRecordWithoutAuthHash> {
     // Encrypt value
-    const encryptedValue = encrypt(value, Buffer.from(encryptionKey));
+    const encryptedValue = encrypt(value, Buffer.from(encryptionKey, 'hex'));
     // Insert into database
     try {
       const result = (await this.prisma.vault.create({

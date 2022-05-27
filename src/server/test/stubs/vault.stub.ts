@@ -8,7 +8,7 @@ import * as crypto from 'crypto';
 
 export const vaultStubForUser1 = (domain: string, password: string): Vault => {
   const encryptionKey = generateEncryptionKey('demo@email.com', 'password');
-  const authHash = generateAuthHash(encryptionKey);
+  const authHash = generateAuthHash('demo@email.com', 'password');
   return {
     id: crypto.randomBytes(16).toString('hex'),
     authHash,
@@ -19,7 +19,7 @@ export const vaultStubForUser1 = (domain: string, password: string): Vault => {
 
 export const vaultStubForUser2 = (domain: string, password: string): Vault => {
   const encryptionKey = generateEncryptionKey('demo2@email.com', 'password');
-  const authHash = generateAuthHash(encryptionKey);
+  const authHash = generateAuthHash('demo2@email.com', 'password');
   return {
     id: crypto.randomBytes(16).toString('hex'),
     authHash,

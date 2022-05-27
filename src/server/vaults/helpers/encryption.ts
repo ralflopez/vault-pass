@@ -36,8 +36,8 @@ export function generateEncryptionKey(email: string, password: string) {
     .toString('hex');
 }
 
-export function generateAuthHash(encryptionKey: string) {
+export function generateAuthHash(email: string, password: string) {
   return crypto
-    .pbkdf2Sync(encryptionKey, 'salt', 1, 32, 'sha512')
+    .pbkdf2Sync(`${email}|${password}`, 'salt', 5001, 32, 'sha512')
     .toString('hex');
 }

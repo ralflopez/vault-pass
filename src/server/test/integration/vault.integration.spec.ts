@@ -61,7 +61,7 @@ describe('VaultController (e2e)', () => {
     return prisma.vault.create({
       data: vaultStub(
         user1.encryptionKey,
-        user2.authHash,
+        user1.authHash,
         'amazon.com',
         'password1',
       ),
@@ -161,32 +161,31 @@ describe('VaultController (e2e)', () => {
     });
   });
 
-  // describe('updateVaultRecord', () => {
-  //   it('should update a vault record with the correct value', async () => {
-  //     const record = await seedUser1();
-  //     const res = await request(app.getHttpServer())
-  //       .patch(`/vaults/${user1.authHash}/${record.id}`)
-  //       .send({
-  //         encryptionKey: user1.encryptionKey,
-  //         value: 'newPassword',
-  //       });
+  describe('updateVaultRecord', () => {
+    it('should update a vault record with the correct value', async () => {
+      const record = await seedUser1();
+      const res = await request(app.getHttpServer())
+        .patch(`/vaults/${user1.authHash}/${record.id}`)
+        .send({
+          encryptionKey: user1.encryptionKey,
+          value: 'newPassword',
+        });
 
-  //     expect(res).toBeUndefined();
-  //     expect(
-  //       decrypt(res.body.value, Buffer.from(user1.encryptionKey, 'hex')),
-  //     ).toEqual('newPassword');
-  //   });
+      expect(
+        decrypt(res.body.value, Buffer.from(user1.encryptionKey, 'hex')),
+      ).toEqual('newPassword');
+    });
 
-  //   it('should return a NOT FOUND error if no vault record found', async () => {
-  //     const res = await request(app.getHttpServer())
-  //       .patch(`/vaults/${user1.authHash}/invalid`)
-  //       .send({
-  //         encryptionKey: user1.encryptionKey,
-  //         value: 'newPassword',
-  //       });
+    it('should return a NOT FOUND error if no vault record found', async () => {
+      const res = await request(app.getHttpServer())
+        .patch(`/vaults/${user1.authHash}/invalid`)
+        .send({
+          encryptionKey: user1.encryptionKey,
+          value: 'newPassword',
+        });
 
-  //     expect(res.status).toBe(HttpStatus.NOT_FOUND);
-  //     expect(res.body.message).toBeDefined();
-  // });
-  // });
+      expect(res.status).toBe(HttpStatus.NOT_FOUND);
+      expect(res.body.message).toBeDefined();
+    });
+  });
 });

@@ -25,9 +25,9 @@ describe('VaultController (e2e)', () => {
     authHash: generateAuthHash('demo2@email.com', 'password'),
   };
 
-  function seed() {
+  async function seed() {
     // seed
-    prisma.vault.createMany({
+    return prisma.vault.createMany({
       data: [
         vaultStub(
           user1.encryptionKey,
@@ -112,10 +112,11 @@ describe('VaultController (e2e)', () => {
 
   describe('findOneVault', () => {
     it('should find a vault with all records for a user', async () => {
-      seed();
+      await seed();
       const res = await request(app.getHttpServer()).get(
         `/vaults/${user1.authHash}`,
       );
+
       expect(res.body.length).toBe(2);
     });
 

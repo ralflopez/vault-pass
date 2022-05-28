@@ -19,9 +19,9 @@ export class VaultsController {
     return this.vaultsService.createRecordInVault(createVaultDto);
   }
 
-  @Get()
-  findAll() {
-    return 'Hello World';
+  @Get(':authHash')
+  findOneVault(@Param('authHash') authHash: string) {
+    return this.vaultsService.findOneVault(authHash);
   }
 
   // @Get(':id')

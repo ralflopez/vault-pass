@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { VaultsService } from './vaults.service';
 import { CreateVaultDto } from './dto/create-vault.dto';
@@ -35,7 +33,7 @@ export class VaultsController {
   }
 
   @Patch('/:authHash/:id')
-  update(
+  updateVaultRecord(
     @Param('authHash') authHash: string,
     @Param('id') id: string,
     @Body() updateVaultRecordDto: UpdateVaultRecordDto,
@@ -47,8 +45,11 @@ export class VaultsController {
     );
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.vaultsService.remove(+id);
-  // }
+  @Delete('/:authHash/:id')
+  removeVaultRecord(
+    @Param('authHash') authHash: string,
+    @Param('id') id: string,
+  ) {
+    return this.vaultsService.removeVaultRecord(authHash, id);
+  }
 }

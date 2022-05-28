@@ -4,7 +4,6 @@ import { CreateVaultDto } from './dto/create-vault.dto';
 import { encrypt } from './helpers/encryption';
 import { VaultRecordWithoutAuthHash } from '../../types/vault';
 import { UpdateVaultRecordDto } from './dto/update-vault-record.dto';
-import { RemoveRecordDto } from './dto/remove-vault-record.dto';
 
 @Injectable()
 export class VaultsService {
@@ -147,15 +146,24 @@ export class VaultsService {
   }
 
   async removeVaultRecord(
+    authHash: string,
     id: string,
-    { authHash }: RemoveRecordDto,
   ): Promise<VaultRecordWithoutAuthHash> {
     try {
-      const result = (await this.prisma.vault.findFirst({
-        where: {
-          authHash,
-          id,
-        },
+      const dbRecord = await this.prisma.vault.findFirst({
+        where: { id },
+      });
+
+      if (dbRecord.authHash !== authHash) {
+        throw new HttpException('Invalid credentials', HttpStatus.FORBIDDEN);
+      }
+    } catch (error) {
+      throw new HttpException('Record not Found', HttpStatus.NOT_FOUND);
+    }
+
+    try {
+      const result = (await this.prisma.vault.delete({
+        where: { id },
         select: {
           domain: true,
           id: true,

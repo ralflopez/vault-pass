@@ -207,7 +207,8 @@ describe('VaultController (e2e)', () => {
         `/vaults/${user2.authHash}/${record.id}`,
       );
 
-      expect(res.status).toBe(HttpStatus.FORBIDDEN);
+      expect(res.status).toBe(HttpStatus.NOT_FOUND);
+      expect(res.body.message).toBeDefined();
     });
   });
 });

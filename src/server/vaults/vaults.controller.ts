@@ -6,9 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { VaultsService } from './vaults.service';
 import { CreateVaultDto } from './dto/create-vault.dto';
+import { UpdateVaultRecordDto } from './dto/update-vault-record.dto';
 
 @Controller('vaults')
 export class VaultsController {
@@ -16,31 +20,32 @@ export class VaultsController {
 
   @Post()
   create(@Body() createVaultDto: CreateVaultDto) {
-    return this.vaultsService.createRecordInVault(createVaultDto);
+    return this.vaultsService.createVaultRecordInVault(createVaultDto);
   }
 
-  @Get(':authHash')
-  findOneVault(@Param('authHash') authHash: string) {
+  @Get('/:authHash')
+  findOneVault(
+    @Param('authHash') authHash: string,
+    @Query('domain') domain: string,
+  ) {
+    if (domain) {
+      return this.vaultsService.findOneVaultRecordByDomain(authHash, domain);
+    }
     return this.vaultsService.findOneVault(authHash);
   }
 
-  @Get('/:authHash/:domain')
-  findOneRecordByDomain(
+  @Patch('/:authHash/:id')
+  update(
     @Param('authHash') authHash: string,
-    @Param('domain') domain: string,
+    @Param('id') id: string,
+    @Body() updateVaultRecordDto: UpdateVaultRecordDto,
   ) {
-    return this.vaultsService.findOneRecordByDomain(authHash, domain);
+    return this.vaultsService.updateVaultRecord(
+      authHash,
+      id,
+      updateVaultRecordDto,
+    );
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.vaultsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateRecordDto: UpdateRecordDto) {
-  //   return this.vaultsService.update(+id, updateVaultDto);
-  // }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

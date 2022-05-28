@@ -57,6 +57,17 @@ describe('VaultController (e2e)', () => {
     });
   }
 
+  async function seedUser1() {
+    return prisma.vault.create({
+      data: vaultStub(
+        user1.encryptionKey,
+        user2.authHash,
+        'amazon.com',
+        'password1',
+      ),
+    });
+  }
+
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -132,7 +143,7 @@ describe('VaultController (e2e)', () => {
     it('should return a valid vault record', async () => {
       await seed();
       const res = await request(app.getHttpServer()).get(
-        `/vaults/${user1.authHash}/amazon.com`,
+        `/vaults/${user1.authHash}?domain=amazon.com`,
       );
 
       expect(
@@ -149,4 +160,33 @@ describe('VaultController (e2e)', () => {
       expect(res.body.message).toBeDefined();
     });
   });
+
+  // describe('updateVaultRecord', () => {
+  //   it('should update a vault record with the correct value', async () => {
+  //     const record = await seedUser1();
+  //     const res = await request(app.getHttpServer())
+  //       .patch(`/vaults/${user1.authHash}/${record.id}`)
+  //       .send({
+  //         encryptionKey: user1.encryptionKey,
+  //         value: 'newPassword',
+  //       });
+
+  //     expect(res).toBeUndefined();
+  //     expect(
+  //       decrypt(res.body.value, Buffer.from(user1.encryptionKey, 'hex')),
+  //     ).toEqual('newPassword');
+  //   });
+
+  //   it('should return a NOT FOUND error if no vault record found', async () => {
+  //     const res = await request(app.getHttpServer())
+  //       .patch(`/vaults/${user1.authHash}/invalid`)
+  //       .send({
+  //         encryptionKey: user1.encryptionKey,
+  //         value: 'newPassword',
+  //       });
+
+  //     expect(res.status).toBe(HttpStatus.NOT_FOUND);
+  //     expect(res.body.message).toBeDefined();
+  // });
+  // });
 });

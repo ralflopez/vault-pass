@@ -1,7 +1,7 @@
 import { IsDefined, IsString } from 'class-validator';
 import { IsMd5 } from '../decorators/is-md5';
 
-export class UpdateRecordDto {
+export class UpdateVaultRecordDto {
   @IsDefined()
   @IsString()
   @IsMd5()

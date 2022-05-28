@@ -3,14 +3,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateVaultDto } from './dto/create-vault.dto';
 import { encrypt } from './helpers/encryption';
 import { VaultRecordWithoutAuthHash } from '../../types/vault';
-import { UpdateRecordDto } from './dto/update-record.dto';
-import { RemoveRecordDto } from './dto/remove-record.dto';
+import { UpdateVaultRecordDto } from './dto/update-vault-record.dto';
+import { RemoveRecordDto } from './dto/remove-vault-record.dto';
 
 @Injectable()
 export class VaultsService {
   constructor(private prisma: PrismaService) {}
 
-  async createRecordInVault({
+  async createVaultRecordInVault({
     authHash,
     domain,
     encryptionKey,
@@ -70,7 +70,7 @@ export class VaultsService {
     return result;
   }
 
-  async findOneRecordByDomain(
+  async findOneVaultRecordByDomain(
     authHash: string,
     domain: string,
   ): Promise<VaultRecordWithoutAuthHash> {
@@ -98,15 +98,33 @@ export class VaultsService {
     return result;
   }
 
-  async updateRecord(
+  async updateVaultRecord(
+    authHash: string,
     id: string,
-    { encryptionKey, value }: UpdateRecordDto,
+    { encryptionKey, value }: UpdateVaultRecordDto,
   ): Promise<VaultRecordWithoutAuthHash> {
     // Encrypt value
-    const encryptedValue = encrypt(value, Buffer.from(encryptionKey));
+    let encryptedValue = '';
+    try {
+      encryptedValue = encrypt(value, Buffer.from(encryptionKey, 'hex'));
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
 
     // Fetch vault
     try {
+      const dbRecord = await this.prisma.vault.findFirst({
+        where: { id },
+      });
+
+      if (!dbRecord) {
+        throw new HttpException('No record found', HttpStatus.NOT_FOUND);
+      }
+
+      if (dbRecord.authHash !== authHash) {
+        throw new HttpException('Invalid credentials', HttpStatus.FORBIDDEN);
+      }
+
       const record = await this.prisma.vault.update({
         where: {
           id,
@@ -128,7 +146,7 @@ export class VaultsService {
     }
   }
 
-  async removeRecord(
+  async removeVaultRecord(
     id: string,
     { authHash }: RemoveRecordDto,
   ): Promise<VaultRecordWithoutAuthHash> {

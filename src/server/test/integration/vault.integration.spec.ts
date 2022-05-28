@@ -11,6 +11,16 @@ import {
   generateEncryptionKey,
 } from '../../vaults/helpers/encryption';
 
+// Mock view service onModuleInit so that it wont run
+import { ViewService } from '../../view/view.service';
+jest.mock('../../view/view.service');
+const viewService = ViewService as jest.Mock;
+viewService.mockImplementation(() => {
+  return {
+    onModuleInit: jest.fn(),
+  };
+});
+
 describe('VaultController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -76,7 +86,7 @@ describe('VaultController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe()); // add to enable class validator
     await app.init();
-    if (!prisma) prisma = moduleFixture.get<PrismaService>(PrismaService);
+    prisma = moduleFixture.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {

@@ -68,7 +68,7 @@ describe('VaultController (e2e)', () => {
     });
   }
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -76,7 +76,7 @@ describe('VaultController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe()); // add to enable class validator
     await app.init();
-    prisma = moduleFixture.get<PrismaService>(PrismaService);
+    if (!prisma) prisma = moduleFixture.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {

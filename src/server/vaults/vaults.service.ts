@@ -111,20 +111,20 @@ export class VaultsService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
 
-    // Fetch vault
     try {
       const dbRecord = await this.prisma.vault.findFirst({
         where: { id },
       });
 
-      if (!dbRecord) {
-        throw new HttpException('No record found', HttpStatus.NOT_FOUND);
-      }
-
       if (dbRecord.authHash !== authHash) {
         throw new HttpException('Invalid credentials', HttpStatus.FORBIDDEN);
       }
+    } catch (error) {
+      throw new HttpException('No record found', HttpStatus.NOT_FOUND);
+    }
 
+    // Fetch vault
+    try {
       const record = await this.prisma.vault.update({
         where: {
           id,

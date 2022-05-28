@@ -42,13 +42,13 @@ describe('VaultController (e2e)', () => {
         vaultStub(
           user1.encryptionKey,
           user1.authHash,
-          'amazon.com',
+          'facebook.com',
           'password1',
         ),
         vaultStub(
           user1.encryptionKey,
           user1.authHash,
-          'facebook.com',
+          'amazon.com',
           'password1',
         ),
         vaultStub(
@@ -146,6 +146,16 @@ describe('VaultController (e2e)', () => {
         `/vaults/${generateAuthHash('invalid@email.com', 'password')}`,
       );
       expect(res.status).toBe(HttpStatus.FORBIDDEN);
+    });
+
+    it('should be in ascending order by domain', async () => {
+      await seed();
+      const res = await request(app.getHttpServer()).get(
+        `/vaults/${user1.authHash}`,
+      );
+
+      expect(res.body[0].domain).toBe('amazon.com');
+      expect(res.body[1].domain).toBe('facebook.com');
     });
   });
 

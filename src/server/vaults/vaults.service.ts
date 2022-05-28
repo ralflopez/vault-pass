@@ -57,6 +57,9 @@ export class VaultsService {
           id: true,
           value: true,
         },
+        orderBy: {
+          domain: 'asc',
+        },
       })) as VaultRecordWithoutAuthHash[];
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);

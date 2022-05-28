@@ -12,7 +12,7 @@ import { VaultsService } from './vaults.service';
 import { CreateVaultDto } from './dto/create-vault.dto';
 import { UpdateVaultRecordDto } from './dto/update-vault-record.dto';
 
-@Controller('vaults')
+@Controller('api/vaults')
 export class VaultsController {
   constructor(private readonly vaultsService: VaultsService) {}
 

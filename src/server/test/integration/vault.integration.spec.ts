@@ -21,6 +21,8 @@ viewService.mockImplementation(() => {
   };
 });
 
+const URL = '/api/vaults';
+
 describe('VaultController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -103,7 +105,7 @@ describe('VaultController (e2e)', () => {
         '8a59192fde85049ec6f11517f871088f96ab97c1ff8f1529bb33d2f6633d099f';
       const password = 'twitterPassword';
       const res = await request(app.getHttpServer())
-        .post('/vaults')
+        .post(URL)
         .set('Content-Type', 'application/json')
         .send({
           authHash:
@@ -118,7 +120,7 @@ describe('VaultController (e2e)', () => {
 
     it('should reject invalid hash', async () => {
       const res = await request(app.getHttpServer())
-        .post('/vaults')
+        .post(URL)
         .set('Content-Type', 'application/json')
         .send({
           authHash: 'invalid',
@@ -135,7 +137,7 @@ describe('VaultController (e2e)', () => {
     it('should find a vault with all records for a user', async () => {
       await seed();
       const res = await request(app.getHttpServer()).get(
-        `/vaults/${user1.authHash}`,
+        `${URL}/${user1.authHash}`,
       );
 
       expect(res.body.length).toBe(2);
@@ -143,7 +145,7 @@ describe('VaultController (e2e)', () => {
 
     it('should return a FORBIDDEN error if no vault found', async () => {
       const res = await request(app.getHttpServer()).get(
-        `/vaults/${generateAuthHash('invalid@email.com', 'password')}`,
+        `${URL}/${generateAuthHash('invalid@email.com', 'password')}`,
       );
       expect(res.status).toBe(HttpStatus.FORBIDDEN);
     });
@@ -151,7 +153,7 @@ describe('VaultController (e2e)', () => {
     it('should be in ascending order by domain', async () => {
       await seed();
       const res = await request(app.getHttpServer()).get(
-        `/vaults/${user1.authHash}`,
+        `${URL}/${user1.authHash}`,
       );
 
       expect(res.body[0].domain).toBe('amazon.com');
@@ -163,7 +165,7 @@ describe('VaultController (e2e)', () => {
     it('should return a valid vault record', async () => {
       await seed();
       const res = await request(app.getHttpServer()).get(
-        `/vaults/${user1.authHash}?domain=amazon.com`,
+        `${URL}/${user1.authHash}?domain=amazon.com`,
       );
 
       expect(
@@ -173,7 +175,7 @@ describe('VaultController (e2e)', () => {
 
     it('should return a NOT FOUND error if no vault record found', async () => {
       const res = await request(app.getHttpServer()).get(
-        `/vaults/${user1.authHash}/invalid.com`,
+        `${URL}/${user1.authHash}/invalid.com`,
       );
 
       expect(res.status).toBe(HttpStatus.NOT_FOUND);
@@ -185,7 +187,7 @@ describe('VaultController (e2e)', () => {
     it('should update a vault record with the correct value', async () => {
       const record = await seedUser1();
       const res = await request(app.getHttpServer())
-        .patch(`/vaults/${user1.authHash}/${record.id}`)
+        .patch(`${URL}/${user1.authHash}/${record.id}`)
         .send({
           encryptionKey: user1.encryptionKey,
           value: 'newPassword',
@@ -198,7 +200,7 @@ describe('VaultController (e2e)', () => {
 
     it('should return a NOT FOUND error if no vault record found', async () => {
       const res = await request(app.getHttpServer())
-        .patch(`/vaults/${user1.authHash}/invalid`)
+        .patch(`${URL}/${user1.authHash}/invalid`)
         .send({
           encryptionKey: user1.encryptionKey,
           value: 'newPassword',
@@ -214,7 +216,7 @@ describe('VaultController (e2e)', () => {
       const record = await seedUser1();
 
       const res = await request(app.getHttpServer()).delete(
-        `/vaults/${user1.authHash}/${record.id}`,
+        `${URL}/${user1.authHash}/${record.id}`,
       );
 
       expect(res.body.id).toBe(record.id);
@@ -224,7 +226,7 @@ describe('VaultController (e2e)', () => {
       const record = await seedUser1();
 
       const res = await request(app.getHttpServer()).delete(
-        `/vaults/${user2.authHash}/${record.id}`,
+        `${URL}/${user2.authHash}/${record.id}`,
       );
 
       expect(res.status).toBe(HttpStatus.NOT_FOUND);

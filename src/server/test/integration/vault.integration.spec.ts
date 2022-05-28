@@ -144,6 +144,7 @@ describe('VaultController (e2e)', () => {
       const res = await request(app.getHttpServer()).get(
         `/vaults/${user1.authHash}/invalid.com`,
       );
+
       expect(res.status).toBe(HttpStatus.NOT_FOUND);
       expect(res.body.message).toBeDefined();
     });

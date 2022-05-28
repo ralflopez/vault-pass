@@ -16,10 +16,16 @@ export class VaultsService {
     encryptionKey,
     value,
   }: CreateVaultDto): Promise<VaultRecordWithoutAuthHash> {
-    // Encrypt value
-    const encryptedValue = encrypt(value, Buffer.from(encryptionKey, 'hex'));
-    // Insert into database
+    let encryptedValue = '';
     try {
+      encryptedValue = encrypt(value, Buffer.from(encryptionKey, 'hex'));
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+
+    // Encrypt value
+    try {
+      // Insert into database
       const result = (await this.prisma.vault.create({
         data: {
           authHash,
@@ -41,16 +47,26 @@ export class VaultsService {
 
   // Find one vault (all passwords)
   async findOneVault(authHash: string): Promise<VaultRecordWithoutAuthHash[]> {
-    const result = (await this.prisma.vault.findMany({
-      where: {
-        authHash,
-      },
-      select: {
-        domain: true,
-        id: true,
-        value: true,
-      },
-    })) as VaultRecordWithoutAuthHash[];
+    let result: VaultRecordWithoutAuthHash[] = [];
+    try {
+      result = (await this.prisma.vault.findMany({
+        where: {
+          authHash,
+        },
+        select: {
+          domain: true,
+          id: true,
+          value: true,
+        },
+      })) as VaultRecordWithoutAuthHash[];
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (result.length < 1) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+
     return result;
   }
 
@@ -58,8 +74,9 @@ export class VaultsService {
     authHash: string,
     domain: string,
   ): Promise<VaultRecordWithoutAuthHash> {
+    let result: VaultRecordWithoutAuthHash;
     try {
-      const result = (await this.prisma.vault.findFirst({
+      result = (await this.prisma.vault.findFirst({
         where: {
           authHash,
           domain,
@@ -70,11 +87,15 @@ export class VaultsService {
           value: true,
         },
       })) as VaultRecordWithoutAuthHash;
-
-      return result;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    if (!result) {
+      throw new HttpException('No record found', HttpStatus.NOT_FOUND);
+    }
+
+    return result;
   }
 
   async updateRecord(

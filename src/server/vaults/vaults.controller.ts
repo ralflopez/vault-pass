@@ -24,6 +24,14 @@ export class VaultsController {
     return this.vaultsService.findOneVault(authHash);
   }
 
+  @Get('/:authHash/:domain')
+  findOneRecordByDomain(
+    @Param('authHash') authHash: string,
+    @Param('domain') domain: string,
+  ) {
+    return this.vaultsService.findOneRecordByDomain(authHash, domain);
+  }
+
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.vaultsService.findOne(+id);

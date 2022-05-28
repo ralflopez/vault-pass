@@ -188,4 +188,26 @@ describe('VaultController (e2e)', () => {
       expect(res.body.message).toBeDefined();
     });
   });
+
+  describe('deleteVaultRecord', () => {
+    it('should delete the correct vault record', async () => {
+      const record = await seedUser1();
+
+      const res = await request(app.getHttpServer()).delete(
+        `/vaults/${user1.authHash}/${record.id}`,
+      );
+
+      expect(res.body.id).toBe(record.id);
+    });
+
+    it('should return a FORBIDDEN error if it belongs to a different account', async () => {
+      const record = await seedUser1();
+
+      const res = await request(app.getHttpServer()).delete(
+        `/vaults/${user2.authHash}/${record.id}`,
+      );
+
+      expect(res.status).toBe(HttpStatus.FORBIDDEN);
+    });
+  });
 });

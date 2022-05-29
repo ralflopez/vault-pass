@@ -3,6 +3,7 @@ import Head from 'next/head';
 import React from 'react';
 import favicon from '../public/favicon.ico';
 import { ChakraProvider } from '@chakra-ui/react';
+import Navbar from '../components/Navbar/Navbar';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
@@ -11,6 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>VaultPass</title>
       </Head>
       <ChakraProvider>
+        <Navbar />
         <Component {...pageProps} />
       </ChakraProvider>
     </>

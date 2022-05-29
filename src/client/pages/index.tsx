@@ -1,8 +1,13 @@
 import { NextPage } from 'next';
 import React from 'react';
+import { HeroSection } from '../components/Landing';
 
 const Home: NextPage = () => {
-  return <div>Home</div>;
+  return (
+    <>
+      <HeroSection />
+    </>
+  );
 };
 
 export default Home;

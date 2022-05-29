@@ -34,7 +34,7 @@ const NavLink = ({
   return (
     <NextLink href={path} passHref>
       <Link
-        fontSize="md"
+        fontSize="lg"
         px={2}
         py={1}
         rounded={'md'}
@@ -68,6 +68,7 @@ const Navbar = () => {
   // handle scroll
   useEffect(() => {
     const handleScroll = () => {
+      console.log('scrolling');
       if (window.scrollY === 0) setScrolledToTop(true);
       else if (scrolledToTop) setScrolledToTop(false);
     };
@@ -83,7 +84,7 @@ const Navbar = () => {
       bg={!scrolledToTop || isOpen ? 'white' : 'transparent'}
       position="fixed"
       zIndex="overlay"
-      h="14"
+      h="16"
       w="full"
       alignItems="center"
     >
@@ -91,7 +92,7 @@ const Navbar = () => {
         <Flex justifyContent="space-between" alignItems="center">
           <HStack>
             <Image src="/images/logo.png" h="8" />
-            <Text fontWeight="bold" fontSize="md">
+            <Text fontWeight="bold" fontSize="lg">
               VaultPass
             </Text>
           </HStack>
@@ -108,7 +109,7 @@ const Navbar = () => {
                 bg="blackAlpha.500"
                 w="full"
                 h="100vh"
-                top="14"
+                top="16"
                 left="0"
                 onClick={closeFromNavBg}
                 ref={navBg}
@@ -122,7 +123,7 @@ const Navbar = () => {
                   bg="whitesmoke"
                   position="fixed"
                   right="0"
-                  top="14"
+                  top="16"
                   bottom="0"
                   w={{
                     base: '100%',
@@ -134,6 +135,7 @@ const Navbar = () => {
                 >
                   {NavLinks.map((link) => (
                     <NavLink
+                      key={link.name}
                       isActive={router.pathname === link.path}
                       path={link.path}
                     >
@@ -152,6 +154,7 @@ const Navbar = () => {
           >
             {NavLinks.map((link) => (
               <NavLink
+                key={link.name}
                 isActive={router.pathname === link.path}
                 path={link.path}
               >

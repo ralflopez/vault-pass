@@ -20,4 +20,9 @@ export class ViewController {
   public async favicon(@Req() req: Request, @Res() res: Response) {
     await this.viewService.handler(req, res);
   }
+
+  @Get('images/**')
+  public async assetsFallback(@Req() req: Request, @Res() res: Response) {
+    await this.viewService.handler(req, res);
+  }
 }

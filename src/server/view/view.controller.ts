@@ -11,6 +11,11 @@ export class ViewController {
     await this.viewService.handler(req, res);
   }
 
+  @Get('/passwords')
+  public async showPassword(@Req() req: Request, @Res() res: Response) {
+    await this.viewService.handler(req, res);
+  }
+
   @Get('_next*')
   public async assets(@Req() req: Request, @Res() res: Response) {
     await this.viewService.handler(req, res);

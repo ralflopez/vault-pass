@@ -1,13 +1,14 @@
 import {
-  Box,
   Container,
   Flex,
   Grid,
   GridItem,
   Heading,
+  IconButton,
+  Spinner,
   useToast,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { CopyIcon } from '@chakra-ui/icons';
 import { useAuthStore } from '../../store/auth';
 import { CreatePasswordModal } from './CreatePasswordModal';
@@ -19,7 +20,11 @@ export const PasswordDashboard = () => {
   const decryptPassword = usePasswordsStore((s) => s.decryptPassword);
   const encryptionKey = useAuthStore((s) => s.encryptionKey);
 
+  const [isLoading, setLoading] = useState(false);
+
   const copy = async (value: string) => {
+    if (isLoading) return;
+    setLoading(true);
     try {
       const data = await decryptPassword(value, encryptionKey);
 
@@ -42,6 +47,8 @@ export const PasswordDashboard = () => {
         isClosable: true,
         position: 'bottom-right',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,18 +73,18 @@ export const PasswordDashboard = () => {
               boxShadow="sm"
             >
               {d.domain}
-              <Flex
-                w="10"
-                h="10"
+              <IconButton
+                aria-label="copy"
                 bg="purple.200"
-                rounded="md"
-                justifyContent="center"
-                alignItems="center"
-                cursor="pointer"
                 onClick={() => copy(d.value)}
-              >
-                <CopyIcon w="6" h="6" color="purple.400" />
-              </Flex>
+                icon={
+                  !isLoading ? (
+                    <CopyIcon w="6" h="6" color="purple.400" />
+                  ) : (
+                    <Spinner w="6" h="6" color="purple.400" />
+                  )
+                }
+              />
             </Flex>
           </GridItem>
         ))}

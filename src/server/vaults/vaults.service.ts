@@ -62,11 +62,8 @@ export class VaultsService {
         },
       })) as VaultRecordWithoutAuthHash[];
     } catch (error) {
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    if (result.length < 1) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
     return result;

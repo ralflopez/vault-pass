@@ -70,8 +70,6 @@ export const CreatePasswordModal = () => {
       await createPassword(authHash, encryptionKey, extractedDomain, password);
       await fetchPassword(authHash);
 
-      setLoading(false);
-      onClose();
       toast({
         title: 'Password Added.',
         description: `New password added for ${extractedDomain}.`,
@@ -81,8 +79,6 @@ export const CreatePasswordModal = () => {
         position: 'bottom-right',
       });
     } catch (error) {
-      setLoading(false);
-      onClose();
       toast({
         title: 'Error Adding Password.',
         description: `There was an error adding a new password.`,
@@ -91,12 +87,19 @@ export const CreatePasswordModal = () => {
         isClosable: true,
         position: 'bottom-right',
       });
+    } finally {
+      setLoading(false);
+      onClose();
+      setDomain('');
+      setPassword('');
     }
   };
 
   return (
     <>
-      <Button onClick={onOpen}>Open Modal</Button>
+      <Button onClick={onOpen} ml={{ sm: '4' }} boxShadow="sm">
+        Add Password
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

@@ -11,6 +11,7 @@ interface PasswordsStore {
     domain: string,
     value: string,
   ) => Promise<void>;
+  decryptPassword: (value: string, encryptionKey: string) => Promise<string>;
 }
 
 const fetchPasswordsMethod = async (authHash: string) => {
@@ -32,6 +33,17 @@ const createPasswordMethod = async (
   });
 };
 
+const decryptPasswordMethod = async (value: string, encryptionKey: string) => {
+  const { data } = await axios.get('/api/crypto/decrypt', {
+    params: {
+      value,
+      encryptionKey,
+    },
+  });
+
+  return data;
+};
+
 export const usePasswordsStore = create<PasswordsStore>()((set) => ({
   passwords: null,
   fetchPasswords: async (authHash: string) =>
@@ -42,4 +54,6 @@ export const usePasswordsStore = create<PasswordsStore>()((set) => ({
     domain: string,
     value: string,
   ) => await createPasswordMethod(authHash, encryptionKey, domain, value),
+  decryptPassword: async (value: string, encryptionKey: string) =>
+    await decryptPasswordMethod(value, encryptionKey),
 }));

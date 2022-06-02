@@ -20,6 +20,7 @@ import { usePasswordsStore } from '../../store/passwords';
 export const MasterPasswordForm = () => {
   const [email, setEmail] = useState('demo@email.com');
   const [password, setPassword] = useState('password');
+
   const setEncryptionKey = useAuthStore((s) => s.setEncryptionKey);
   const setAuthHash = useAuthStore((s) => s.setAuthHash);
   const fetchPasswords = usePasswordsStore((s) => s.fetchPasswords);
@@ -35,11 +36,13 @@ export const MasterPasswordForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const encryptionKey = generateEncryptionKey(`${email}${password}`);
+    const encryptionKey = generateEncryptionKey(`${email}|${password}`);
     const authHash = generateAuthHash(`${email}|${password}`);
 
     setEncryptionKey(encryptionKey);
     setAuthHash(authHash);
+    console.log('encryption key: ');
+    console.log(encryptionKey);
 
     await fetchPasswords(authHash);
   };

@@ -8,26 +8,22 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import React from 'react';
-import { VaultRecordWithoutAuthHash } from '../../../types/vault';
 import { CopyIcon } from '@chakra-ui/icons';
 import { useAuthStore } from '../../store/auth';
-import CryptoJS from 'crypto-js';
 import { CreatePasswordModal } from './CreatePasswordModal';
 import { usePasswordsStore } from '../../store/passwords';
 
 export const PasswordDashboard = () => {
   const toast = useToast();
   const passwords = usePasswordsStore((s) => s.passwords);
+  const decryptPassword = usePasswordsStore((s) => s.decryptPassword);
   const encryptionKey = useAuthStore((s) => s.encryptionKey);
 
-  const copy = (value: string) => {
+  const copy = async (value: string) => {
     try {
-      const [ivStr, val] = value.split('.');
-      const ivW = CryptoJS.enc.Hex.parse(ivStr);
-      const encW = CryptoJS.enc.Hex.parse(encryptionKey);
+      const data = await decryptPassword(value, encryptionKey);
 
-      const res = CryptoJS.AES.decrypt(val, encW, { iv: ivW }).toString();
-
+      navigator.clipboard.writeText(data);
       toast({
         title: 'Copied to clipbord.',
         description: 'Your password was copied to to your clip board.',
@@ -51,7 +47,7 @@ export const PasswordDashboard = () => {
 
   return (
     <Container pt="14" maxW="container.lg">
-      <Heading as="h2" mt="4" mb="4">
+      <Heading as="h2" mt="4" mb="8">
         Your Passwords
         <CreatePasswordModal />
       </Heading>
@@ -60,26 +56,27 @@ export const PasswordDashboard = () => {
         gridGap="4"
       >
         {passwords.map((d) => (
-          <GridItem>
+          <GridItem key={d.id}>
             <Flex
-              bg="purple.200"
+              bg="purple.100"
               rounded="md"
               p="4"
               alignItems="center"
               justifyContent="space-between"
+              boxShadow="sm"
             >
               {d.domain}
               <Flex
                 w="10"
                 h="10"
-                bg="purple.300"
+                bg="purple.200"
                 rounded="md"
                 justifyContent="center"
                 alignItems="center"
                 cursor="pointer"
                 onClick={() => copy(d.value)}
               >
-                <CopyIcon w="6" h="6" color="purple.600" />
+                <CopyIcon w="6" h="6" color="purple.400" />
               </Flex>
             </Flex>
           </GridItem>

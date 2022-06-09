@@ -19,7 +19,6 @@ import { useRouter } from 'next/router';
 const NavLinks = [
   { name: 'Home', path: '/' },
   { name: 'Passwords', path: '/passwords' },
-  { name: 'Account', path: '/account' },
 ];
 
 const NavLink = ({

@@ -1,73 +1,54 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🔐 Vault Pass
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A password manager based on the [Zero Knowledge Model](https://www.lastpass.com/security/zero-knowledge-security)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# 🌐 Preview
 
-## Description
+![Preview](https://github.com/ralflopez/vault-pass/raw/main/preview.gif)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# 🌎 Live
 
-## Installation
+- Not available because of the code architecture. (MVC with nest js + next js). Free tier hosting services cannot acommodate running 2 apps (front end + backend) in one instance.
+- Solution: Split frontend and backend into different services (client + API) instead of having one MVC codebase.
 
-```bash
-$ npm install
-```
+## 👩‍💻 Tech Stack
 
-## Running the app
+- Typescript
+- Nest.js
+- Next.js
+- Chakra UI
+- REST
+- PostgreSQL
+- Session Auth
+- Prisma
+- Docker
+- Jest
 
-```bash
-# development
-$ npm run start
+## ❔ Pogram Flow
 
-# watch mode
-$ npm run start:dev
+### Getting vault / passwords
 
-# production mode
-$ npm run start:prod
-```
+1. Client: input email and master password
+2. Client: Generate encrpytion key by hashing email and password with PBKDF2 (5k rounds)
+3. Client: Generate authentication key by hashing email and password with PBKDF2 (+1 round)
+4. Server: Hash authentication key with PBKD2F (100k rounds) \*
+5. Server: Query passwords based on the authentication key
+6. Client: Decrpyt using the encryption key (AES - 256)
 
-## Test
+### Adding a password
 
-```bash
-# unit tests
-$ npm run test
+1. Client: input email and master password
+2. Client: Generate encrpytion key by hashing email and password with PBKDF2 (5k rounds)
+3. Client: Generate authentication key by hashing email and password with PBKDF2 (+1 round)
+4. Server: Hash input with PBKD2F (100k rounds) \*
+5. Server: Encrpyt input with AES - 256
+6. Server: Store in database with hashed authentication key
 
-# e2e tests
-$ npm run test:e2e
+## 🚀 Optimization needed
 
-# test coverage
-$ npm run test:cov
-```
+1. Use async version of the bcrpyt hasing function so that the process can run on libuvs thread pool and not block the event loop.
 
-## Support
+## 📚 References
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+[LastPass Security Architecture](https://assets.cdngetgo.com/69/c0/2cef992e48eeba015c85312f16ce/lastpass-encryption.pdf)
+[How Passwords Mangers Work](https://www.youtube.com/watch?v=w68BBPDAWr8)

@@ -50,5 +50,5 @@ A password manager based on the [Zero Knowledge Model](https://www.lastpass.com/
 
 ## 📚 References
 
-[LastPass Security Architecture](https://assets.cdngetgo.com/69/c0/2cef992e48eeba015c85312f16ce/lastpass-encryption.pdf)
-[How Passwords Mangers Work](https://www.youtube.com/watch?v=w68BBPDAWr8)
+- [LastPass Security Architecture](https://assets.cdngetgo.com/69/c0/2cef992e48eeba015c85312f16ce/lastpass-encryption.pdf)
+- [How Passwords Mangers Work](https://www.youtube.com/watch?v=w68BBPDAWr8)
